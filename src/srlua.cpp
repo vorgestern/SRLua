@@ -49,7 +49,7 @@ If execfile is not given, it will be derived from scriptname.)__", argv[0]);
             SIGNATURE,
             runtime.size(),
             scripttext.size(),
-            fnscript.size()+1    // Include a zero
+            fnscript.size()
         };
 
         // printf("script: '%s' (%u)\n", fnscript.c_str(), scripttext.size());
@@ -63,7 +63,7 @@ If execfile is not given, it will be derived from scriptname.)__", argv[0]);
                 rc=fprintf(stderr, "Failed to write runtime to output file '%s'\n", fnexec.c_str()),1;
             if (const auto len2=fwrite(scripttext.c_str(), 1, scripttext.size(), kexec); len2!=scripttext.size())
                 rc=fprintf(stderr, "Failed to write script source to output file '%s'\n", fnexec.c_str()),1;
-            if (const auto len3=fwrite(fnscript.c_str(), 1, fnscript.size()+1, kexec); len3!=fnscript.size()+1)
+            if (const auto len3=fwrite(fnscript.c_str(), 1, fnscript.size(), kexec); len3!=fnscript.size())
                 rc=fprintf(stderr, "Failed to write script file name to output file '%s'\n", fnexec.c_str()),1;
             if (const auto len4=fwrite(&sig, 1, sizeof(sig), kexec); len4!=sizeof(sig))
                 rc=fprintf(stderr, "Failed to signature to output file '%s'\n", fnexec.c_str()),1;

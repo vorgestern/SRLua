@@ -60,8 +60,8 @@ int main(int argc, char*argv[])
                 exit(1);
             }
             fseek(k, sig.runtimesize+sig.scriptsize, SEEK_SET);
-            string scriptname(sig.scriptnamesize-1,0);
-            if (const auto numbytes=fread(scriptname.data(), 1, sig.scriptnamesize-1, k); numbytes!=sig.scriptnamesize-1)
+            string scriptname(sig.scriptnamesize,0);
+            if (const auto numbytes=fread(scriptname.data(), 1, sig.scriptnamesize, k); numbytes!=sig.scriptnamesize)
             {
                 fprintf(stderr, "Cannot read script name from '%s'.\n", progname);
                 exit(1);
