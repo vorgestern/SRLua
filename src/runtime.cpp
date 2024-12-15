@@ -38,24 +38,24 @@ int main(int argc, char*argv[])
         // Extract the script and push its loader function on to the stack.
         if (FILE*k=fopen(progname, "rb"); k!=nullptr)
         {
-            Glue signature;
-            const int sigsize=sizeof(Glue);
+            Signature sig;
+            const int sigsize=sizeof sig;
             fseek(k, -sigsize, SEEK_END);
-            if (fread(&signature, sigsize, 1, k)!=1)
+            if (fread(&sig, sigsize, 1, k)!=1)
             {
                 fprintf(stderr, "Cannot read signature from '%s'.\n", progname);
                 exit(1);
             }
-            if (memcmp(signature.sig, GLUESIG, GLUELEN)!=0)
+            if (memcmp(sig.sig, SIGNATURE, SIGNATURELEN)!=0)
             {
                 fprintf(stderr, "Signature not matched in '%s'.\n", progname);
                 exit(1);
             }
-            string script(signature.size2, 0);
-            fseek(k, signature.size1, SEEK_SET);
-            if (const auto numbytes=fread(script.data(), 1, signature.size2, k); numbytes!=signature.size2)
+            string script(sig.size2, 0);
+            fseek(k, sig.size1, SEEK_SET);
+            if (const auto numbytes=fread(script.data(), 1, sig.size2, k); numbytes!=sig.size2)
             {
-                fprintf(stderr, "Cannot read %ld bytes of code from '%s'.\n", signature.size2, progname);
+                fprintf(stderr, "Cannot read %ld bytes of code from '%s'.\n", sig.size2, progname);
                 exit(1);
             }
             fclose(k);

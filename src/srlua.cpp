@@ -45,7 +45,7 @@ If execfile is not given, it will be derived from scriptname.)__", argv[0]);
     if (const auto scripttext=filecontent(fnscript); !scripttext.empty())
     {
         string_view runtime=chunk_runtime();
-        const Glue signature={GLUESIG, static_cast<long>(runtime.size()), static_cast<long>(scripttext.size())};
+        const Signature sig={SIGNATURE, static_cast<long>(runtime.size()), static_cast<long>(scripttext.size())};
 
         // printf("script: '%s' (%u)\n", fnscript.c_str(), scripttext.size());
         // printf("exec:   '%s'\n", fnexec.c_str());
@@ -58,7 +58,7 @@ If execfile is not given, it will be derived from scriptname.)__", argv[0]);
                 rc=fprintf(stderr, "Failed to write runtime to output file '%s'\n", fnexec.c_str()),1;
             if (const auto len2=fwrite(scripttext.c_str(), 1, scripttext.size(), kexec); len2!=scripttext.size())
                 rc=fprintf(stderr, "Failed to write script source to output file '%s'\n", fnexec.c_str()),1;
-            if (const auto len3=fwrite(&signature, 1, sizeof(signature), kexec); len3!=sizeof(signature))
+            if (const auto len3=fwrite(&sig, 1, sizeof(sig), kexec); len3!=sizeof(sig))
                 rc=fprintf(stderr, "Failed to signature to output file '%s'\n", fnexec.c_str()),1;
             fclose(kexec);
             return rc;
