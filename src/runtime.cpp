@@ -32,7 +32,7 @@ int main(int argc, char*argv[])
                                     }
                                     lua_setglobal(L, "arg");
 
-        luaL_checkstack(L, argc+1, "Too many arguments to script.");
+        luaL_checkstack(L, argc+1, "Out of stack memory (too many arguments to script?).");
         lua_pushcfunction(L, msghandler);
 
         // Extract the script and push its loader function on to the stack.
@@ -51,11 +51,11 @@ int main(int argc, char*argv[])
                 fprintf(stderr, "Signature not matched in '%s'.\n", progname);
                 exit(1);
             }
-            string script(sig.size2, 0);
-            fseek(k, sig.size1, SEEK_SET);
-            if (const auto numbytes=fread(script.data(), 1, sig.size2, k); numbytes!=sig.size2)
+            string script(sig.scriptsize, 0);
+            fseek(k, sig.runtimesize, SEEK_SET);
+            if (const auto numbytes=fread(script.data(), 1, sig.scriptsize, k); numbytes!=sig.scriptsize)
             {
-                fprintf(stderr, "Cannot read %ld bytes of code from '%s'.\n", sig.size2, progname);
+                fprintf(stderr, "Cannot read %ld bytes of code from '%s'.\n", sig.scriptsize, progname);
                 exit(1);
             }
             fclose(k);
