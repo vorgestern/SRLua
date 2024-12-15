@@ -1,13 +1,12 @@
 
 #include <string>
-#include <string_view>
 #include "signature.h"
 
 using namespace std;
 
 string_view chunk_runtime();
 
-string filecontent(const string&f)
+static string filecontent(const string&f)
 {
     FILE*k=fopen(f.c_str(), "rb");
     if (k==nullptr) return {};
@@ -51,10 +50,6 @@ If execfile is not given, it will be derived from scriptname.)__", argv[0]);
             scripttext.size(),
             fnscript.size()
         };
-
-        // printf("script: '%s' (%u)\n", fnscript.c_str(), scripttext.size());
-        // printf("exec:   '%s'\n", fnexec.c_str());
-        // return 0;
 
         if (FILE*kexec=fopen(fnexec.c_str(), "wb"); kexec!=nullptr)
         {
