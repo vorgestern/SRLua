@@ -1,93 +1,69 @@
 
-/*
-* srglue.c
-* glue exe and script for srlua
-* Luiz Henrique de Figueiredo <lhf@tecgraf.puc-rio.br>
-* 13 Aug 2019 08:44:57
-* This code is hereby placed in the public domain and also under the MIT license
-*/
-
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <string_view>
 #include "srglue.h"
 
 using namespace std;
 
-static const char*progname="srglue";
-
-static void cannot(const char*what, const char*name)
-{
-    fprintf(stderr, "%s: cannot %s %s: %s\n", progname, what, name, strerror(errno));
-    exit(EXIT_FAILURE);
-}
-
-static FILE*open(const char*name, const char*mode, const char*outname)
-{
-    if (outname!=NULL && strcmp(name, outname)==0)
-    {
-        errno=EPERM;
-        cannot("overwrite input file", name);
-        return NULL;
-    }
-    else
-    {
-        FILE*f=fopen(name, mode);
-        if (f==NULL) cannot("open", name);
-        return f;
-    }
-}
-
-static long copy(FILE*in, const char*name, FILE*out, const char*outname)
-{
-    long size;
-    if (fseek(in, 0, SEEK_END)!=0) cannot("seek", name);
-    size=ftell(in);
-    if (fseek(in, 0, SEEK_SET)!=0) cannot("seek", name);
-    for (;;)
-    {
-        char b[BUFSIZ];
-        int n=fread(&b, 1, sizeof(b), in);
-        if (n==0) { if (ferror(in)) cannot("read", name); else break; }
-        if (fwrite(&b, n, 1, out)!=1)  cannot("write", outname);
-    }
-    fclose(in);
-    return size;
-}
-
-static long copy(string_view in, const char*name, FILE*out, const char*outname)
-{
-    const long size=in.size();
-    if (fwrite(in.data(), size, 1, out)!=1)  cannot("write", outname);
-    return size;
-}
-
 string_view chunk_runtime();
+
+string filecontent(const string&f)
+{
+    FILE*k=fopen(f.c_str(), "rb");
+    if (k==nullptr) return {};
+    const int size=(fseek(k, 0, SEEK_END), ftell(k));
+    fseek(k, 0, SEEK_SET);
+    string result(size,0);
+    if (fread(result.data(), 1, size, k)!=size) return {};
+    return result;
+}
 
 int main(int argc, char*argv[])
 {
-    if (argv[0]!=NULL && argv[0][0]!=0) progname=argv[0];
-    if (argc!=3)
+    string fnscript, fnexec;
+    for (auto a=1; a<argc; ++a)
     {
-        fprintf(stderr, "usage: %s in.lua out.exe\n", progname);
-        return 1;
+        if (fnscript.empty()) fnscript=argv[a];
+        else if (fnexec.empty()) fnexec=argv[a];
     }
-    else
+    if (fnscript.empty())
     {
-        const char*scriptname=argv[1];
-        const char*outname=argv[2];
+        fprintf(stderr, R"__(Usage: %s luascript [execfile]
+will write the executable version of luascript to execfile.
+If execfile is not given, it will be derived from scriptname.)__", argv[0]);
+        exit(1);
+    }
+    if (fnexec.empty())
+    {
+#ifdef _MSC_BUILD
+        fnexec=string(fnscript, 0, fnscript.rfind(".lua"))+".exe";
+#else
+        fnexec=string(fnscript, 0, fnscript.rfind(".lua"));
+#endif
+    }
+
+    if (const auto scripttext=filecontent(fnscript); !scripttext.empty())
+    {
         string_view runtime=chunk_runtime();
-        FILE*in2=open(argv[1], "rb", argv[3]);
-        FILE*out=open(argv[2], "wb", NULL);
-        Glue t={GLUESIG, 0, 0};
-        t.size1=copy(runtime, "runtime", out, outname);
-        t.size2=copy(in2, scriptname, out, outname);
-        printf("Runtime: %u Bytes (%u)\n", runtime.size(), t.size1);
-        printf("Script: %u Bytes (%u)\n", runtime.size(), t.size2);
-        if (fwrite(&t, sizeof(t), 1, out)!=1) cannot("write", outname);
-        if (fclose(out)!=0) cannot("close", outname);
-        return 0;
+        const Glue signature={GLUESIG, static_cast<long>(runtime.size()), static_cast<long>(scripttext.size())};
+
+        // printf("script: '%s' (%u)\n", fnscript.c_str(), scripttext.size());
+        // printf("exec:   '%s'\n", fnexec.c_str());
+        // return 0;
+
+        if (FILE*kexec=fopen(fnexec.c_str(), "wb"); kexec!=nullptr)
+        {
+            int rc=0;
+            if (const auto len1=fwrite(runtime.data(), 1, runtime.size(), kexec); len1!=runtime.size())
+                rc=fprintf(stderr, "Failed to write runtime to output file '%s'\n", fnexec.c_str()),1;
+            if (const auto len2=fwrite(scripttext.c_str(), 1, scripttext.size(), kexec); len2!=scripttext.size())
+                rc=fprintf(stderr, "Failed to write script source to output file '%s'\n", fnexec.c_str()),1;
+            if (const auto len3=fwrite(&signature, 1, sizeof(signature), kexec); len3!=sizeof(signature))
+                rc=fprintf(stderr, "Failed to signature to output file '%s'\n", fnexec.c_str()),1;
+            fclose(kexec);
+            return rc;
+        }
+        else return fprintf(stderr, "Failed to create output file '%s'\n", fnexec.c_str()),1;
     }
+    else return fprintf(stderr, "Failed to read script '%s'\n", fnscript.c_str()),1;
 }
