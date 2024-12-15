@@ -11,27 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include "srglue.h"
 #include <lua.hpp>
-
-#if LUA_VERSION_NUM<=501
-
-#define lua_load(L, r, d, n, m) (lua_load)(L, r, d, n)
-#define luaL_traceback(L, M, m, l) traceback(L, m)
-
-static void traceback(lua_State*L, const char*message)
-{
-    lua_getglobal(L, "debug");
-    if (!lua_istable(L, -1)) { lua_pop(L, 1); return; }
-    lua_getfield(L, -1, "traceback");
-    if (!lua_isfunction(L, -1)) { lua_pop(L, 2); return; }
-    lua_pushstring(L, message);
-    lua_pushinteger(L, 2);
-    lua_call(L, 2, 1);
-}
-
-#endif
 
 static const char*progname="srlua";
 
@@ -84,20 +65,19 @@ static void load(lua_State*L, const char*name)
 
 static int pmain(lua_State*L)
 {
-    int argc=(int)lua_tointeger(L, 1);
-    char**argv=(char**)lua_touserdata(L, 2);
-    int i;
+    const int argc=(int)lua_tointeger(L, 1);
+    const char**argv=(const char**)lua_touserdata(L, 2);
     luaL_openlibs(L);
     load(L, argv[0]);
     lua_createtable(L, argc, 0);
-    for (i=0; i<argc; i++)
+    for (int i=0; i<argc; i++)
     {
         lua_pushstring(L, argv[i]);
         lua_rawseti(L, -2, i);
     }
     lua_setglobal(L, "arg");
     luaL_checkstack(L, argc-1, "too many arguments to script");
-    for (i=1; i<argc; i++) lua_pushstring(L, argv[i]);
+    for (int i=1; i<argc; i++) lua_pushstring(L, argv[i]);
     lua_call(L, argc-1, 0);
     return 0;
 }
@@ -116,11 +96,10 @@ static int msghandler(lua_State*L)
 
 int main(int argc, char*argv[])
 {
-    lua_State*L;
     if (argv[0]==NULL) fatal("cannot locate this executable");
     progname=argv[0];
-    L=luaL_newstate();
-    if (L==NULL) fatal("cannot create state: not enough memory");
+    lua_State*L=luaL_newstate();
+    if (L==nullptr) fatal("cannot create state: not enough memory");
     lua_pushcfunction(L, msghandler);
     lua_pushcfunction(L, &pmain);
     lua_pushinteger(L, argc);
