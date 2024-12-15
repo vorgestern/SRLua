@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <ImportGroup Label="PropertySheets"/>
+    <PropertyGroup Label="UserMacros"/>
+    <PropertyGroup>
+        <_ProjectFileVersion>17.0.35327.3</_ProjectFileVersion>
+        <_PropertySheetDisplayName>Lua Eigenschaftsseiten</_PropertySheetDisplayName>
+    </PropertyGroup>
+
+    <ItemDefinitionGroup Condition="'$(Platform)'=='Win32'">
+        <ClCompile>
+            <AdditionalIncludeDirectories>$(ROBINSON)\lua\5.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+        </ClCompile>
+        <Link>
+          <AdditionalDependencies>lua54-shared.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+          <AdditionalLibraryDirectories>$(ROBINSON)\lua\lib</AdditionalLibraryDirectories>
+        </Link>
+    </ItemDefinitionGroup>
+    <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
+        <!--
+            If Lua is present in 64bits, supply corresponding settings here.
+        -->
+    </ItemDefinitionGroup>
+
+    <ItemGroup/>
+</Project>

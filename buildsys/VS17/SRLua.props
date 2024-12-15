@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <ImportGroup Label="PropertySheets"/>
+    <PropertyGroup Label="UserMacros"/>
+    <PropertyGroup>
+        <_ProjectFileVersion>17.0.35327.3</_ProjectFileVersion>
+        <_PropertySheetDisplayName>SRGlue Eigenschaftsseiten</_PropertySheetDisplayName>
+    </PropertyGroup>
+    <PropertyGroup Label="Configuration"/>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+        <OutDir>..\..\</OutDir>
+    </PropertyGroup>
+
+    <ItemDefinitionGroup>
+        <ClCompile>
+            <WarningLevel>Level3</WarningLevel>
+            <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <SDLCheck>true</SDLCheck>
+            <ConformanceMode>true</ConformanceMode>
+            <LanguageStandard>stdcpp20</LanguageStandard>
+            <PrecompiledHeader>NotUsing</PrecompiledHeader>
+            <PrecompiledHeaderFile/>
+            <PrecompiledHeaderOutputFile/>
+        </ClCompile>
+        <Link>
+            <GenerateDebugInformation>true</GenerateDebugInformation>
+            <EnableUAC>false</EnableUAC>
+            <ImportLibrary>$(IntDir)$(TargetName).lib</ImportLibrary>
+            <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+        </Link>
+        <ResourceCompile>
+            <AdditionalIncludeDirectories>Release;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+        </ResourceCompile>
+    </ItemDefinitionGroup>
+
+    <ItemGroup/>
+</Project>
