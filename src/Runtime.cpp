@@ -63,17 +63,6 @@ static void load(lua_State*L, const char*name)
     fclose(f);
 }
 
-static int pmain(lua_State*L)
-{
-    const int argc=(int)lua_tointeger(L, 1);
-    const char**argv=(const char**)lua_touserdata(L, 2);
-    load(L, argv[0]);
-    luaL_checkstack(L, argc-1, "too many arguments to script");
-    for (int i=1; i<argc; i++) lua_pushstring(L, argv[i]);
-    lua_call(L, argc-1, 0);
-    return 0;
-}
-
 static int msghandler(lua_State*L)
 {
     const char*message=lua_tostring(L, 1);
@@ -93,20 +82,19 @@ int main(int argc, char*argv[])
     if (lua_State*L=luaL_newstate(); L!=nullptr)
     {
         luaL_openlibs(L);
+                                    lua_createtable(L, argc, 0);
+                                    for (int i=0; i<argc; i++)
+                                    {
+                                        lua_pushstring(L, argv[i]);
+                                        lua_rawseti(L, -2, i);
+                                    }
+                                    lua_setglobal(L, "arg");
 
-        lua_createtable(L, argc, 0);
-        for (int i=0; i<argc; i++)
-        {
-            lua_pushstring(L, argv[i]);
-            lua_rawseti(L, -2, i);
-        }
-        lua_setglobal(L, "arg");
-
+        luaL_checkstack(L, argc+1, "too many arguments to script");
         lua_pushcfunction(L, msghandler);
-        lua_pushcfunction(L, &pmain);
-        lua_pushinteger(L, argc);
-        lua_pushlightuserdata(L, argv);
-        if (lua_pcall(L, 2, 0, 1)!=0) fatal(lua_tostring(L, -1));
+        load(L, argv[0]);
+        for (int i=1; i<argc; i++) lua_pushstring(L, argv[i]);
+        if (lua_pcall(L, argc-1, 0, 1)!=0) fatal(lua_tostring(L, -1));
         lua_close(L);
     }
     else fatal("cannot create state: not enough memory");
