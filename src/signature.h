@@ -5,5 +5,5 @@
 struct Signature
 {
     char sig[SIGNATURELEN+1];
-    long runtimesize, scriptsize, scriptnamesize;
+    size_t runtimesize, scriptsize, scriptnamesize;
 };

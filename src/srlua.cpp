@@ -47,9 +47,9 @@ If execfile is not given, it will be derived from scriptname.)__", argv[0]);
         string_view runtime=chunk_runtime();
         const Signature sig={
             SIGNATURE,
-            static_cast<long>(runtime.size()),
-            static_cast<long>(scripttext.size()),
-            fnscript.size()+1
+            runtime.size(),
+            scripttext.size(),
+            fnscript.size()+1    // Include a zero
         };
 
         // printf("script: '%s' (%u)\n", fnscript.c_str(), scripttext.size());
