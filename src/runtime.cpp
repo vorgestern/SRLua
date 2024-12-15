@@ -36,6 +36,7 @@ int main(int argc, char*argv[])
         lua_pushcfunction(L, msghandler);
 
         // Extract the script and push its loader function on to the stack.
+        // Use the embedded script name for error messages.
         if (FILE*k=fopen(progname, "rb"); k!=nullptr)
         {
             Signature sig;
@@ -58,8 +59,15 @@ int main(int argc, char*argv[])
                 fprintf(stderr, "Cannot read %ld bytes of code from '%s'.\n", sig.scriptsize, progname);
                 exit(1);
             }
+            fseek(k, sig.runtimesize+sig.scriptsize, SEEK_SET);
+            string scriptname(sig.scriptnamesize-1,0);
+            if (const auto numbytes=fread(scriptname.data(), 1, sig.scriptnamesize-1, k); numbytes!=sig.scriptnamesize-1)
+            {
+                fprintf(stderr, "Cannot read script name from '%s'.\n", progname);
+                exit(1);
+            }
             fclose(k);
-            luaL_loadbufferx(L, script.c_str(), script.size(), "embedded", nullptr);
+            luaL_loadbufferx(L, script.c_str(), script.size(), scriptname.c_str(), nullptr);
         }
         else
         {
