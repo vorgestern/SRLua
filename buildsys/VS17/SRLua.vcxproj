@@ -99,14 +99,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\srglue.cpp" />
+    <ClCompile Include="..\..\src\srlua.cpp" />
     <ClCompile Include="..\..\src\resources_winapi.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\srglue.h" />
+    <ClInclude Include="..\..\src\signature.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="SRLua.rc" />
+    <ResourceCompile Include="srlua.rc" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

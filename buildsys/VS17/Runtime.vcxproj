@@ -99,10 +99,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\Runtime.cpp" />
+    <ClCompile Include="..\..\src\runtime.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\srglue.h" />
+    <ClInclude Include="..\..\src\signature.h" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
