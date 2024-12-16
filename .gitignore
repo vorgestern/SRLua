@@ -6,3 +6,7 @@ buildsys/VS17/Runtime
 buildsys/VS17/Release
 buildsys/VS17/Debug
 buildsys/VS17/SRLua
+
+srlua
+add
+b/*
