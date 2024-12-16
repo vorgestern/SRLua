@@ -16,6 +16,7 @@
         <ClCompile>
             <WarningLevel>Level3</WarningLevel>
             <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <TreatWarningAsError>true</TreatWarningAsError>
             <SDLCheck>true</SDLCheck>
             <ConformanceMode>true</ConformanceMode>
             <LanguageStandard>stdcpp20</LanguageStandard>

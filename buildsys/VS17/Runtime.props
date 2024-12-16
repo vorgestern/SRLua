@@ -13,6 +13,7 @@
             <WarningLevel>Level3</WarningLevel>
             <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
             <SDLCheck>true</SDLCheck>
+            <TreatWarningAsError>true</TreatWarningAsError>
             <ConformanceMode>true</ConformanceMode>
             <LanguageStandard>stdcpp20</LanguageStandard>
             <PrecompiledHeader>NotUsing</PrecompiledHeader>
