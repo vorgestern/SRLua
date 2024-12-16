@@ -1,5 +1,6 @@
 
 #include <filesystem>
+#include <cstring>
 #include <lua.hpp>
 #include "signature.h"
 
