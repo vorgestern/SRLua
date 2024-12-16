@@ -4,7 +4,8 @@
     <PropertyGroup Label="UserMacros"/>
     <PropertyGroup>
         <_ProjectFileVersion>17.0.35327.3</_ProjectFileVersion>
-        <_PropertySheetDisplayName>SRGlue Eigenschaftsseiten</_PropertySheetDisplayName>
+        <_PropertySheetDisplayName>SRLua Eigenschaftsseiten</_PropertySheetDisplayName>
+        <TargetName>srlua</TargetName>
     </PropertyGroup>
     <PropertyGroup Label="Configuration"/>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
