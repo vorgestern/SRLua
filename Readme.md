@@ -25,7 +25,11 @@ but can still be found if `LUA_PATH` or `LUA_CPATH` are set appropriately.
 
 ## on Windows
 
-    Use buildsys/VS17/SRLua.sln     Release/32 bits will be built in repository root.
+    Edit buildsys/VS17/Lua.props    Set AdditionalIncludeDirectories, AdditionalDependencies
+                                    and AdditionalLibraryDirectories according to your
+                                    Lua-Installation.
+    Open buildsys/VS17/SRLua.sln    Build Configuration Release/32bit
+                                    Release/32 bits will be built in repository root.
 
 ## or on Linux
 Use Makefile
