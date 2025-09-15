@@ -9,10 +9,18 @@ but can still be found if `LUA_PATH` or `LUA_CPATH` are set appropriately.
 
 # How to use
 
-    srlua add.lua                   Will create ./add.exe, embedding add.lua.
+    srlua add.lua                   Will create ./add.exe (Windows) or ./add (Linux), embedding add.lua.
     ./add 21 22                     Will execute the embedded script, passing the arguments.
 
     srlua add.lua other.exe         Will create ./other.exe instead.
+
+    luac -o temp add.lua
+    srlua temp add.exe              Will embed bytecode, error messages still refer to the original script.
+    ./add a b
+    add.lua:5: arg1 ('a') is not a number!
+    stack traceback:
+            [C]: in function 'error'
+            add.lua:5: in main chunk
 
 # Improvements over the original
 
