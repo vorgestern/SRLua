@@ -61,7 +61,7 @@ If execfile is not given, it will be derived from scriptname.)__", argv[0]);
             if (const auto len3=fwrite(fnscript.c_str(), 1, fnscript.size(), kexec); len3!=fnscript.size())
                 rc=(fprintf(stderr, "Failed to write script file name to output file '%s'\n", fnexec.c_str()),1);
             if (const auto len4=fwrite(&sig, 1, sizeof(sig), kexec); len4!=sizeof(sig))
-                rc=(fprintf(stderr, "Failed to signature to output file '%s'\n", fnexec.c_str()),1);
+                rc=(fprintf(stderr, "Failed to write signature to output file '%s'\n", fnexec.c_str()),1);
             fclose(kexec);
             return rc;
         }
