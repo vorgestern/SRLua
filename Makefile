@@ -11,7 +11,7 @@ dir:
 	@mkdir -p b
 
 srlua: b/srlua.o b/runtime.o b/resources_linux.o
-	@g++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $^
+	@g++ -z noexecstack -o $@ $(CPPFLAGS) $(CXXFLAGS) $^
 
 b/srlua.o: src/srlua.cpp src/signature.h
 	@g++ -c $< -o $@ $(CPPFLAGS) $(CXXFLAGS)
