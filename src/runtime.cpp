@@ -4,13 +4,24 @@
 #include <lua.hpp>
 #include "signature.h"
 
+#ifdef _MSC_VER
+#include <windows.h>
+#endif
+
 using namespace std;
 using fspath=filesystem::path;
 
 #ifdef _MSC_VER
+fspath absoluteself(const char arg0[])
+{
+    char pad[4096];
+    const auto len=GetModuleFileName(NULL, pad, sizeof(pad));
+    if (len<sizeof(pad)) return pad;
+    else return fspath(arg0);
+}
 #else
 #include <unistd.h>
-fspath absoluteself(fspath self)
+fspath absoluteself(const char arg0[])
 {
     char pad[4096];
     const auto size=readlink("/proc/self/exe", pad, sizeof(pad));
@@ -19,10 +30,7 @@ fspath absoluteself(fspath self)
         pad[size]=0;
         return pad;
     }
-    else
-    {
-        return self;
-    }
+    else return arg0;
 }
 #endif
 
@@ -40,9 +48,9 @@ static int msghandler(lua_State*L)
 
 int main(int argc, char*argv[])
 {
-    fspath progname=argv[0];
-    if (progname.is_relative()) progname=absoluteself(progname);
-    if (progname.is_relative())
+    const fspath exeself=absoluteself(argv[0]);
+    const auto progname=exeself.generic_string();
+    if (exeself.is_relative())
     {
         fprintf(stderr, "Cannot locate '%s' to read.\n", progname.c_str());
         exit(1);
