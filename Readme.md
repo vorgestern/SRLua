@@ -10,6 +10,7 @@ but can still be found if `LUA_PATH` or `LUA_CPATH` are set appropriately.
 # How to use
 
     srlua add.lua                   Will create ./add.exe (Windows) or ./add (Linux), embedding add.lua.
+    chmod +x add                    Only on Linux, to make executable.
     ./add 21 22                     Will execute the embedded script, passing the arguments.
 
     srlua add.lua other.exe         Will create ./other.exe instead.
@@ -26,8 +27,8 @@ but can still be found if `LUA_PATH` or `LUA_CPATH` are set appropriately.
 
 - No need for a second executable, srlua is a standalone solution.
 - Improved error messages from embedded scripts by embedding the script name along with its content.
+- Works on Windows and Linux
 - Rewritten in C++
-- Windows build
 
 # How to build
 
