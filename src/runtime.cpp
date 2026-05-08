@@ -5,6 +5,26 @@
 #include "signature.h"
 
 using namespace std;
+using fspath=filesystem::path;
+
+#ifdef _MSC_VER
+#else
+#include <unistd.h>
+fspath absoluteself(fspath self)
+{
+    char pad[4096];
+    const auto size=readlink("/proc/self/exe", pad, sizeof(pad));
+    if (size>0 && size<(ssize_t)sizeof(pad))
+    {
+        pad[size]=0;
+        return pad;
+    }
+    else
+    {
+        return self;
+    }
+}
+#endif
 
 static int msghandler(lua_State*L)
 {
@@ -20,7 +40,13 @@ static int msghandler(lua_State*L)
 
 int main(int argc, char*argv[])
 {
-    const char*progname=argv[0];
+    fspath progname=argv[0];
+    if (progname.is_relative()) progname=absoluteself(progname);
+    if (progname.is_relative())
+    {
+        fprintf(stderr, "Cannot locate '%s' to read.\n", progname.c_str());
+        exit(1);
+    }
     if (lua_State*L=luaL_newstate(); L!=nullptr)
     {
         luaL_openlibs(L);
@@ -37,33 +63,33 @@ int main(int argc, char*argv[])
 
         // Extract the script and push its loader function on to the stack.
         // Use the embedded script name for error messages.
-        if (FILE*k=fopen(progname, "rb"); k!=nullptr)
+        if (FILE*k=fopen(progname.c_str(), "rb"); k!=nullptr)
         {
             Signature sig;
             const int sigsize=sizeof sig;
             fseek(k, -sigsize, SEEK_END);
             if (fread(&sig, sigsize, 1, k)!=1)
             {
-                fprintf(stderr, "Cannot read signature from '%s'.\n", progname);
+                fprintf(stderr, "Cannot read signature from '%s'.\n", progname.c_str());
                 exit(1);
             }
             if (memcmp(sig.sig, SIGNATURE, SIGNATURELEN)!=0)
             {
-                fprintf(stderr, "Signature not matched in '%s'.\n", progname);
+                fprintf(stderr, "Signature not matched in '%s'.\n", progname.c_str());
                 exit(1);
             }
             string script(sig.scriptsize, 0);
             fseek(k, sig.runtimesize, SEEK_SET);
             if (const auto numbytes=fread(script.data(), 1, sig.scriptsize, k); numbytes!=sig.scriptsize)
             {
-                fprintf(stderr, "Cannot read %ld bytes of code from '%s'.\n", sig.scriptsize, progname);
+                fprintf(stderr, "Cannot read %ld bytes of code from '%s'.\n", sig.scriptsize, progname.c_str());
                 exit(1);
             }
             fseek(k, sig.runtimesize+sig.scriptsize, SEEK_SET);
             string scriptname(sig.scriptnamesize,0);
             if (const auto numbytes=fread(scriptname.data(), 1, sig.scriptnamesize, k); numbytes!=sig.scriptnamesize)
             {
-                fprintf(stderr, "Cannot read script name from '%s'.\n", progname);
+                fprintf(stderr, "Cannot read script name from '%s'.\n", progname.c_str());
                 exit(1);
             }
             fclose(k);
@@ -71,7 +97,7 @@ int main(int argc, char*argv[])
         }
         else
         {
-            fprintf(stderr, "Cannot read '%s'\n", progname);
+            fprintf(stderr, "Cannot read '%s'\n", progname.c_str());
             exit(1);
         }
 
