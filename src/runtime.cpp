@@ -4,14 +4,12 @@
 #include <lua.hpp>
 #include "signature.h"
 
+using std::string;
+using fspath=std::filesystem::path;
+
 #ifdef _MSC_VER
+
 #include <windows.h>
-#endif
-
-using namespace std;
-using fspath=filesystem::path;
-
-#ifdef _MSC_VER
 fspath absoluteself(const char arg0[])
 {
     char pad[4096];
@@ -19,7 +17,9 @@ fspath absoluteself(const char arg0[])
     if (len<sizeof(pad)) return pad;
     else return fspath(arg0);
 }
+
 #else
+
 #include <unistd.h>
 fspath absoluteself(const char arg0[])
 {
@@ -32,6 +32,7 @@ fspath absoluteself(const char arg0[])
     }
     else return arg0;
 }
+
 #endif
 
 static int msghandler(lua_State*L)
